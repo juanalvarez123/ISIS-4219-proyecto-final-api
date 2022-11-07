@@ -1,2 +1,3 @@
-# ISIS-4219-proyecto-final
-Proyecto final para Machine Learning Techniques
+# ISIS-4219: Proyecto final
+
+Proyecto final para machine learning techniques.
