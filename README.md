@@ -1,3 +1,3 @@
-# ISIS-4219: Proyecto final
+# ISIS-4219: API Proyecto final
 
-Proyecto final para machine learning techniques.
+API para el proyecto final de machine learning techniques.

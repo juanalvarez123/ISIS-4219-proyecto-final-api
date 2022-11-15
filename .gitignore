@@ -1,5 +1,6 @@
 env/
 __pycache__/
+*.jpeg
 
 *.iml
 .DS_Store
