@@ -1,7 +1,6 @@
 import random
 import string
 
-import tensorflow as tf
 from flask import Flask
 from flask import jsonify
 from flask import request
@@ -18,7 +17,6 @@ def create_app(arg_environment):
 
 environment = config['development']
 app = create_app(environment)
-generator = tf.keras.models.load_model('dolphin_generator_epoch_5999.h5')
 CORS(app, support_credentials=True)
 
 @app.route('/ping', methods=['GET'])
