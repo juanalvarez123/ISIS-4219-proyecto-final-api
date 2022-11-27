@@ -1,10 +1,8 @@
-import random
-import string
-
 from flask import Flask
 from flask import jsonify
 from flask import request
 from flask_cors import CORS, cross_origin
+from transformers import pipeline
 
 from config import config
 
@@ -15,9 +13,15 @@ def create_app(arg_environment):
     return local_app
 
 
+qa_pipeline = pipeline(
+    "question-answering",
+    model="mrm8488/bert-multi-cased-finetuned-xquadv1",
+    tokenizer="mrm8488/bert-multi-cased-finetuned-xquadv1"
+)
 environment = config['development']
 app = create_app(environment)
 CORS(app, support_credentials=True)
+
 
 @app.route('/ping', methods=['GET'])
 def get_ping():
@@ -25,14 +29,16 @@ def get_ping():
 
 
 @cross_origin(supports_credentials=True)
-@app.route('/predict', methods=['POST'])
+@app.route('/v1/predict', methods=['POST'])
 def post_predict():
     data = request.json
     predictions = []
 
     for question in data['questions']:
-        random_answer = ''.join(random.choices(string.ascii_lowercase, k=20))
-        predictions.append({'question': question, 'answer': random_answer})
+        answer = qa_pipeline({
+            'context': data['text'],
+            'question': question})
+        predictions.append({'question': question, 'answer': answer})
 
     return jsonify({'predictions': predictions})
 
