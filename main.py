@@ -13,11 +13,18 @@ def create_app(arg_environment):
     return local_app
 
 
-qa_pipeline = pipeline(
+qa_pipeline_v1 = pipeline(
     "question-answering",
     model="mrm8488/bert-multi-cased-finetuned-xquadv1",
     tokenizer="mrm8488/bert-multi-cased-finetuned-xquadv1"
 )
+
+qa_pipeline_v2 = pipeline(
+    "question-answering",
+    model="LeoAngel/bert-finetuned-crossxquadv1_25sbl",
+    tokenizer="LeoAngel/bert-finetuned-crossxquadv1_25sbl"
+)
+
 environment = config['development']
 app = create_app(environment)
 CORS(app, support_credentials=True)
@@ -30,12 +37,27 @@ def get_ping():
 
 @cross_origin(supports_credentials=True)
 @app.route('/v1/predict', methods=['POST'])
-def post_predict():
+def post_v1_predict():
     data = request.json
     predictions = []
 
     for question in data['questions']:
-        answer = qa_pipeline({
+        answer = qa_pipeline_v1({
+            'context': data['text'],
+            'question': question})
+        predictions.append({'question': question, 'answer': answer})
+
+    return jsonify({'predictions': predictions})
+
+
+@cross_origin(supports_credentials=True)
+@app.route('/v2/predict', methods=['POST'])
+def post_v2_predict():
+    data = request.json
+    predictions = []
+
+    for question in data['questions']:
+        answer = qa_pipeline_v2({
             'context': data['text'],
             'question': question})
         predictions.append({'question': question, 'answer': answer})
